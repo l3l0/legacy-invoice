@@ -1,0 +1,26 @@
+web:
+  build: .
+  links:
+    - db
+  volumes:
+    - .:/var/www/invoice
+  ports:
+    - "80:80"
+db:
+  image: mysql:5.6
+  environment:
+    MYSQL_ROOT_PASSWORD: invoice
+    MYSQL_DATABASE: invoice
+  ports:
+    - "3306:3306"
+  volumes:
+    - /mnt/sda1/var/lib/invoice-data:/var/lib/mysql
+    - docker/db/my.cnf:/etc/mysql/my.cnf
+phpmyadmin:
+  image: simplyintricate/phpmyadmin
+  links:
+    - db
+  volumes:
+    - docker/db/config.inc.php:/usr/share/nginx/html/config.inc.php
+  ports:
+    - "8080:80"

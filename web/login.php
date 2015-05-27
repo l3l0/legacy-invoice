@@ -1,14 +1,14 @@
 <?php session_start(); ?>
-
+<?php ob_start(); ?>
 <?php require_once 'config.php'; ?>
 <?php require_once 'functions.php'; ?>
-
-<?php if ($_POST): ?>
-    <?php login(); ?>
-<?php endif ?>
-
+<?php
+if ($_POST)
+{
+    login();
+}
+?>
 <?php require_once 'header.php'; ?>
-
 <div class="container">
     <div class="row">
         <div class="col-md-4 col-md-offset-4">
@@ -42,5 +42,5 @@
         </div>
     </div>
 </div>
-
 <?php require_once 'footer.php'; ?>
+<?php ob_end_flush(); ?>

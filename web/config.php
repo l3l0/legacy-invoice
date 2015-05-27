@@ -1,11 +1,11 @@
 <?php
 
 $config = [
-    'db_host' => '192.168.56.101',
-    'db_user' => 'invoice',
-    'db_database_name' => 'invoice_legacy',
-    'db_password' => 'test123',
-    'db_port' => '5432'
+    'db_host' => 'db',
+    'db_user' => 'root',
+    'db_database_name' => 'invoice',
+    'db_password' => 'invoice',
+    'db_port' => '3306'
 ];
 
 $pages = [
@@ -42,7 +42,7 @@ $pages = [
 ];
 
 try {
-    $connection = new \PDO('pgsql:host='. $config['db_host'] .';port='. $config['db_port'] .';dbname='. $config['db_database_name'] .';user='. $config['db_user'] .';password='. $config['db_password']);
+    $connection = new \PDO('mysql:host='. $config['db_host'] .';port='. $config['db_port'] .';dbname='. $config['db_database_name'], $config['db_user'], $config['db_password']);
 } catch (\PDOException $exception) {
     die ('Cannot connect to database');
 }

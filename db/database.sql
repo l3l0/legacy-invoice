@@ -1,7 +1,7 @@
 DROP TABLE IF EXISTS invoice_items, invoices, users;
 
 CREATE TABLE users (
-    id SERIAL PRIMARY KEY,
+    id INT PRIMARY KEY AUTO_INCREMENT,
     email VARCHAR(255) NOT NULL,
     password_hash VARCHAR(255) NOT NULL,
     vat VARCHAR(20),
@@ -9,7 +9,7 @@ CREATE TABLE users (
     address VARCHAR(255)
 );
 CREATE TABLE invoices (
-    id SERIAL PRIMARY KEY,
+    id INT PRIMARY KEY AUTO_INCREMENT,
     invoice_number VARCHAR(150) NOT NULL,
     date_of_invoice TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     sell_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -26,7 +26,7 @@ CREATE TABLE invoices (
     FOREIGN KEY (user_id) REFERENCES users(id)
 );
 CREATE TABLE invoice_items (
-    id SERIAL PRIMARY KEY,
+    id INT PRIMARY KEY AUTO_INCREMENT,
     invoice_id INTEGER NOT NULL,
     name VARCHAR(255) NOT NULL,
     quantity INTEGER NOT NULL,
@@ -36,3 +36,5 @@ CREATE TABLE invoice_items (
     total_price NUMERIC(12, 2) NOT NULL,
     FOREIGN KEY (invoice_id) REFERENCES invoices(id)
 );
+
+INSERT INTO users (email, password_hash) VALUES ("leszek.prabucki@gmail.com", "$2y$10$S3vjSF4I0Bt6M1TwjOTTAuF.dZi8sigshQbUOdFlrhhoNh1khQj56");

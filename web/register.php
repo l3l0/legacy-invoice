@@ -1,10 +1,11 @@
+<?php ob_start(); ?>
 <?php require_once 'config.php'; ?>
 <?php require_once 'functions.php'; ?>
-
-<?php if ($_POST): ?>
-    <?php register(); ?>
-<?php endif ?>
-
+<?php
+if ($_POST) {
+    register();
+}
+?>
 <?php require_once 'header.php'; ?>
 
 <div class="container">
@@ -40,3 +41,4 @@
 </div>
 
 <?php require_once 'footer.php'; ?>
+<?php ob_end_flush(); ?>

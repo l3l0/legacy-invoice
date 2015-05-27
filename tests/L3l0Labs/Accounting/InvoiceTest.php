@@ -12,24 +12,26 @@ class InvoiceTest extends \PhpUnit_Framework_TestCase
      */
     public function canBeIssued()
     {
-        $invoice = new Invoice();
-        $invoice->setNumber('2015/01/01');
-        $invoice->setSellerName('Cocoders Sp. z o.o');
-        $invoice->setSellerAddress('ul. Jęczmienna 19, 87-200 Toruń');
-        $invoice->setSellerVatNumber('9562307984');
-        $invoice->setIssueDate(new \DateTime('2015-01-01'));
-        $invoice->setMaturityDate(new \DateTime('2015-01-07'));
-        $invoice->setSellDate(new \DateTime('2015-01-01'));
-        $invoice->setBuyerName('Leszek Prabucki "l3l0 labs"');
-        $invoice->setBuyerAddress('ul. Królewskie Wzgórze 21/9, 80-283 Gdańsk');
-        $invoice->setBuyerVatNumber('9562307984');
-        $invoice->setAdditionalInfo('test');
+        $invoice = new Invoice(
+            $number = '2015/01/01',
+            $sellerName = 'Cocoders Sp. z o.o',
+            $sellerAddress = 'ul. Jęczmienna 19, 87-200 Toruń',
+            $sellerVatNumber = '9562307984',
+            $issueDate = new \DateTime('2015-01-01'),
+            $maturityDate = new \DateTime('2015-01-07'),
+            $sellDate = new \DateTime('2015-01-01'),
+            $buyerName = 'Leszek Prabucki "l3l0 labs"',
+            $buyerAddress = 'ul. Królewskie Wzgórze 21/9, 80-283 Gdańsk',
+            $buyerVatNumber = '9562307984'
+        );
+        $invoice->setAdditionalText('test');
 
-        $item = new Item();
-        $item->setName('Wytwarzanie aplikacji internetowych');
-        $item->setQuantity(1);
-        $item->setUnitNetPrice(3000);
-        $item->setVatRate(0.23);
+        $item = new Item(
+            'Wytwarzanie aplikacji internetowych',
+            $quantity = 1,
+            $unitNetPrice = 3000,
+            $vatRate = 0.23
+        );
 
         $invoice->setItems([$item]);
 

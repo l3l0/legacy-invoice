@@ -8,7 +8,7 @@ final class Seller
     private $address;
     private $vatNumber;
 
-    public function __construct($name, $address, $vatNumber)
+    public function __construct($name, $address, VatIdNumber $vatNumber)
     {
         $this->name = $name;
         $this->address = $address;

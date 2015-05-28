@@ -16,7 +16,7 @@ class InvoiceTest extends \PhpUnit_Framework_TestCase
             new Invoice\Seller(
                 'Cocoders Sp. z o.o',
                 'ul. Jęczmienna 19, 87-200 Toruń',
-                '9562307984'
+                new Invoice\VatIdNumber('9562307984')
             ),
             new Invoice\Period(
                 new \DateTime('2015-01-01'),
@@ -26,7 +26,7 @@ class InvoiceTest extends \PhpUnit_Framework_TestCase
             new Invoice\Buyer(
                 'Leszek Prabucki "l3l0 labs"',
                 'ul. Królewskie Wzgórze 21/9, 80-283 Gdańsk',
-                '9562307984'
+                new Invoice\VatIdNumber('9562307984')
             )
         );
         $invoice->setAdditionalText('test');

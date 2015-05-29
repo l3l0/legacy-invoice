@@ -1,5 +1,8 @@
 <?php
 
+use L3l0Labs\Accounting\Invoice;
+use L3l0Labs\Adapters\MysqlAccountingAdapter\InvoiceRegistry;
+
 $loginErrors = [];
 $registerErrors = [];
 $invoiceFormErrors = [];
@@ -14,7 +17,7 @@ function login() {
         $loginErrors['password'] = "Password field was empty.";
     } elseif (!empty($_POST['email']) && !empty($_POST['password'])) {
 
-        $stmt = $connection->prepare('SELECT id, email, password_hash FROM users WHERE email = :email');
+        $stmt = $connection->prepare('SELECT id, email, password_hash, vat FROM users WHERE email = :email');
         $stmt->execute(['email' => $_POST['email']]);
         $users = $stmt->fetchAll();
 
@@ -54,7 +57,7 @@ function register()
         $stmt->execute([
             'email' => $_POST['email'],
             'password' => password_hash($_POST['password'], PASSWORD_BCRYPT),
-            'vat' => (string) (new \L3l0Labs\Accounting\Invoice\VatIdNumber($_POST['vat']))
+            'vat' => (string) (new Invoice\VatIdNumber($_POST['vat']))
         ]);
         header('Location: /login.php?successRegister=1');
         exit;
@@ -122,34 +125,37 @@ function createInvoice()
     validateInvoice();
 
     if (!$invoiceFormErrors) {
-        $stmt = $connection->prepare('INSERT INTO invoices (invoice_number, date_of_invoice, sell_date, maturity_date, seller_name, seller_address, seller_vat_number, buyer_name, buyer_address, buyer_vat_number, user_id, additional_info, total_price) VALUES (:invoice_number, :date_of_invoice, :sell_date, :maturity_date, :seller_name, :seller_address, :seller_vat_number, :buyer_name, :buyer_address, :buyer_vat_number, :user_id, :additional_info, :total_price)');
-        $stmt->execute([
-            'invoice_number' => $_POST['invoice_number'],
-            'date_of_invoice' => date($_POST['date_of_invoice']),
-            'sell_date' => date($_POST['date_of_invoice']),
-            'maturity_date' => date($_POST['date_of_invoice']),
-            'seller_name' => $_POST['seller_name'],
-            'seller_address' => $_POST['seller_address'],
-            'seller_vat_number' => $_POST['seller_vat_number'],
-            'buyer_name' => $_POST['buyer_name'],
-            'buyer_address' => $_POST['buyer_address'],
-            'buyer_vat_number' => $_POST['buyer_vat_number'],
-            'user_id' => $_SESSION['loggedInUser']['id'],
-            'additional_info' => $_POST['additional_info'],
-            'total_price' => totalPrice($_POST['invoice_item'])
-        ]);
 
+        $invoiceRegistry = new InvoiceRegistry($connection);
+        $invoice = new Invoice(
+            $_POST['invoice_number'],
+            new Invoice\Seller(
+                $_POST['seller_name'],
+                $_POST['seller_address'],
+                new Invoice\VatIdNumber($_POST['seller_vat_number'])
+            ),
+            new Invoice\Period(
+                new \DateTimeImmutable($_POST['date_of_invoice']),
+                new \DateTimeImmutable($_POST['maturity_date'])
+            ),
+            new \DateTimeImmutable($_POST['maturity_date']),
+            new Invoice\Buyer(
+                $_POST['buyer_name'],
+                $_POST['buyer_address'],
+                new Invoice\VatIdNumber($_POST['buyer_vat_number'])
+            )
+        );
+        $invoice->setAdditionalText($_POST['additional_info']);
         foreach ($_POST['invoice_item'] as $key => $item) {
-            $stmt = $connection->prepare("INSERT INTO invoice_items (invoice_id, name, quantity, unit, net_price, vat, total_price) VALUES (currval('invoices_id_seq'), :name, :quantity, :unit, :net_price, :vat, :total_price)");
-            $stmt->execute([
-                'name' => $item['name'],
-                'quantity' => $item['quantity'],
-                'unit' => $item['unit'],
-                'net_price' => $item['net_price'],
-                'vat' => $item['vat'],
-                'total_price' => $item['net_price'] + ($item['net_price'] * ($item['vat']/100)),
-            ]);
+            $invoice->addItem(new Invoice\Item(
+                $item['name'],
+                $item['quantity'],
+                $item['net_price'],
+                $item['vat'],
+                $item['unit']
+            ));
         }
+        $invoiceRegistry->add($invoice);
 
         header('Location: /index.php?page=invoices&successMessage="Invoice created"');
         exit;

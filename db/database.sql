@@ -22,7 +22,7 @@ CREATE TABLE invoices (
     buyer_name VARCHAR (255) NOT NULL,
     buyer_address VARCHAR(255),
     total_price NUMERIC(12, 2),
-    user_id INTEGER NOT NULL,
+    user_id INTEGER NULL,
     FOREIGN KEY (user_id) REFERENCES users(id)
 );
 CREATE TABLE invoice_items (

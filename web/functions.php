@@ -1,7 +1,6 @@
 <?php
 
 use L3l0Labs\Accounting\Invoice;
-use L3l0Labs\Adapters\MysqlAccountingAdapter\InvoiceRegistry;
 
 $loginErrors = [];
 $registerErrors = [];
@@ -120,42 +119,24 @@ function totalPrice($items)
 
 function createInvoice()
 {
-    global $connection, $invoiceFormErrors;
+    global $issueInvoice, $invoiceFormErrors;
 
     validateInvoice();
 
     if (!$invoiceFormErrors) {
-
-        $invoiceRegistry = new InvoiceRegistry($connection);
-        $invoice = new Invoice(
+        $issueInvoice->execute(new \L3l0Labs\Accounting\UseCase\IssueInvoice\Command(
             $_POST['invoice_number'],
-            new Invoice\Seller(
-                $_POST['seller_name'],
-                $_POST['seller_address'],
-                new Invoice\VatIdNumber($_POST['seller_vat_number'])
-            ),
-            new Invoice\Period(
-                new \DateTimeImmutable($_POST['date_of_invoice']),
-                new \DateTimeImmutable($_POST['maturity_date'])
-            ),
-            new \DateTimeImmutable($_POST['maturity_date']),
-            new Invoice\Buyer(
-                $_POST['buyer_name'],
-                $_POST['buyer_address'],
-                new Invoice\VatIdNumber($_POST['buyer_vat_number'])
-            )
-        );
-        $invoice->setAdditionalText($_POST['additional_info']);
-        foreach ($_POST['invoice_item'] as $key => $item) {
-            $invoice->addItem(new Invoice\Item(
-                $item['name'],
-                $item['quantity'],
-                $item['net_price'],
-                $item['vat'],
-                $item['unit']
-            ));
-        }
-        $invoiceRegistry->add($invoice);
+            $_POST['seller_name'],
+            $_POST['seller_address'],
+            $_POST['seller_vat_number'],
+            $_POST['date_of_invoice'],
+            $_POST['maturity_date'],
+            $_POST['sell_date'],
+            $_POST['buyer_name'],
+            $_POST['buyer_address'],
+            $_POST['buyer_vat_number'],
+            $_POST['invoice_item']
+        ));
 
         header('Location: /index.php?page=invoices&successMessage="Invoice created"');
         exit;

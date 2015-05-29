@@ -52,3 +52,6 @@ try {
     die ('Cannot connect to database');
 }
 
+$invoiceRegistry = new \L3l0Labs\Adapters\MysqlAccountingAdapter\InvoiceRegistry($connection);
+$issueInvoice = new \L3l0Labs\Accounting\UseCase\IssueInvoice($invoiceRegistry);
+

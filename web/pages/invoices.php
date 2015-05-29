@@ -1,7 +1,10 @@
 <?php
-    $invoices = (new \L3l0Labs\Adapters\MysqlAccountingAdapter\InvoiceRegistry($connection))
-        ->outgoing(new \L3l0Labs\Accounting\Invoice\VatIdNumber($_SESSION['loggedInUser']['vat']));
-    ;
+
+use L3l0Labs\Accounting\Invoice\VatIdNumber;
+
+global $invoiceRegistry;
+
+$invoices = $invoiceRegistry->outgoing(new VatIdNumber($_SESSION['loggedInUser']['vat']));
 ?>
 
 <div class="row">

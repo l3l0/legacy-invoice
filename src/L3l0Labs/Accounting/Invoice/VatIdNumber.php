@@ -8,11 +8,16 @@ final class VatIdNumber
 
     public function __construct($number)
     {
-        $this->number = $number;
+        $this->number = self::normalizeNumber($number);
     }
 
     public function __toString()
     {
         return (string) $this->number;
+    }
+
+    private static function normalizeNumber($number)
+    {
+        return preg_replace('/[^0-9]/', '', $number);
     }
 }

@@ -39,7 +39,9 @@ function register()
         $registerErrors['email'] = "Email field was empty.";
     } elseif (empty($_POST['password'])) {
         $registerErrors['password'] = "Password field was empty.";
-    } elseif (!empty($_POST['email']) && !empty($_POST['password'])) {
+    } elseif (empty($_POST['vat'])) {
+        $registerErrors['vat'] = "Vat field was empty.";
+    } elseif (!empty($_POST['email']) && !empty($_POST['password']) && !empty($_POST['vat'])) {
         $stmt = $connection->prepare('SELECT id, email FROM users WHERE email = :email');
         $stmt->execute(['email' => $_POST['email']]);
         $users = $stmt->fetchAll();
@@ -48,8 +50,12 @@ function register()
             $registerErrors['email'] = "User with given email exists already.";
             return;
         }
-        $stmt = $connection->prepare('INSERT INTO users (email, password_hash) VALUES (:email, :password)');
-        $stmt->execute(['email' => $_POST['email'], 'password' => password_hash($_POST['password'], PASSWORD_BCRYPT)]);
+        $stmt = $connection->prepare('INSERT INTO users (email, password_hash, vat) VALUES (:email, :password, :vat)');
+        $stmt->execute([
+            'email' => $_POST['email'],
+            'password' => password_hash($_POST['password'], PASSWORD_BCRYPT),
+            'vat' => (string) (new \L3l0Labs\Accounting\Invoice\VatIdNumber($_POST['vat']))
+        ]);
         header('Location: /login.php?successRegister=1');
         exit;
     }

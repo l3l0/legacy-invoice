@@ -1,5 +1,10 @@
 <?php
 
+require_once '../vendor/autoload.php';
+
+error_reporting(E_ALL);
+ini_set('display_error', 1);
+
 $config = [
     'db_host' => 'db',
     'db_user' => 'root',

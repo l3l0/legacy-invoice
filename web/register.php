@@ -20,15 +20,21 @@ if ($_POST) {
                         <fieldset>
                             <div class="form-group <?php if (isset($registerErrors['email'])): ?>has-error<?php endif ?>">
                                 <?php if (isset($registerErrors['email'])): ?>
-                                    <label class="control-label" for="login-email"><?php echo $registerErrors['email'] ?></label>
+                                    <label class="control-label" for="register-email"><?php echo $registerErrors['email'] ?></label>
                                 <?php endif ?>
-                                <input class="form-control" placeholder="E-mail" name="email" type="email" autofocus id="login-email">
+                                <input class="form-control" placeholder="E-mail" name="email" type="email" autofocus id="register-email">
                             </div>
                             <div class="form-group <?php if (isset($registerErrors['password'])): ?>has-error<?php endif ?>">
                                 <?php if (isset($registerErrors['password'])): ?>
-                                    <label class="control-label" for="login-email"><?php echo $registerErrors['password'] ?></label>
+                                    <label class="control-label" for="register-password"><?php echo $registerErrors['password'] ?></label>
                                 <?php endif ?>
-                                <input class="form-control" placeholder="Password" name="password" type="password" value="" id="login-password">
+                                <input class="form-control" placeholder="Password" name="password" type="password" value="" id="register-password">
+                            </div>
+                            <div class="form-group <?php if (isset($registerErrors['vat'])): ?>has-error<?php endif ?>">
+                                <?php if (isset($registerErrors['vat'])): ?>
+                                    <label class="control-label" for="register-vat"><?php echo $registerErrors['vat'] ?></label>
+                                <?php endif ?>
+                                <input class="form-control" placeholder="Vat Number" name="vat" type="text" value="" id="register-vat">
                             </div>
                             <!-- Change this to a button or input when using this as a form -->
                             <input type="submit" class="btn btn-lg btn-success btn-block" value="Register" />

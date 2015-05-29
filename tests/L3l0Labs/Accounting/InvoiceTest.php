@@ -35,7 +35,8 @@ class InvoiceTest extends \PhpUnit_Framework_TestCase
             'Wytwarzanie aplikacji internetowych',
             $quantity = 1,
             $unitNetPrice = 3000,
-            $vatRate = 0.23
+            $vatRate = 23,
+            'dzień'
         );
         $invoice->addItem($item);
 

@@ -20,4 +20,20 @@ final class Period
         $this->from = $from;
         $this->to = $to;
     }
+
+    /**
+     * @return \DateTimeInterface
+     */
+    public function getFrom()
+    {
+        return $this->from;
+    }
+
+    /**
+     * @return \DateTimeInterface
+     */
+    public function getTo()
+    {
+        return $this->to;
+    }
 }

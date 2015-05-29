@@ -68,8 +68,47 @@ class Invoice
         return $this->buyer;
     }
 
+    /**
+     * @return Period
+     */
+    public function getPeriod()
+    {
+        return $this->period;
+    }
+
+    /**
+     * @return DateTimeInterface
+     */
+    public function getSellDate()
+    {
+        return $this->sellDate;
+    }
+
     public function setAdditionalText($additionalText)
     {
         $this->additionalText = $additionalText;
+    }
+
+    public function getAdditionalText()
+    {
+        return $this->additionalText;
+    }
+
+    public function getTotalPrice()
+    {
+        $totalPrice = 0;
+        foreach ($this->items as $item) {
+            $totalPrice += $item->getGrossPrice();
+        }
+
+        return $totalPrice;
+    }
+
+    /**
+     * @return Item[]
+     */
+    public function getItems()
+    {
+        return $this->items;
     }
 }

@@ -32,7 +32,6 @@ final class InvoiceRegistry implements InvoiceRegistryInterface
         $invoicesResultStmt->execute();
         $invoicesResults = $invoicesResultStmt->fetchAll();
 
-
         return $this->hydrateToInvoices($invoicesResults);
     }
 
@@ -49,7 +48,6 @@ final class InvoiceRegistry implements InvoiceRegistryInterface
         $invoicesResultStmt->bindValue('vat', (string) $fromVatNumber);
         $invoicesResultStmt->execute();
         $invoicesResults = $invoicesResultStmt->fetchAll();
-
 
         return $this->hydrateToInvoices($invoicesResults);
     }
@@ -163,8 +161,8 @@ final class InvoiceRegistry implements InvoiceRegistryInterface
     {
         $invoices = [];
         foreach ($invoicesResults as $invoiceResult) {
-            if (!isset($invoices[$invoiceResult['seller_vat_number']])) {
-                $invoices[$invoiceResult['seller_vat_number']] = new Invoice(
+            if (!isset($invoices[$invoiceResult['invoice_number']])) {
+                $invoices[$invoiceResult['invoice_number']] = new Invoice(
                     $invoiceResult['invoice_number'],
                     new Invoice\Seller(
                         $invoiceResult['seller_name'],
@@ -182,10 +180,10 @@ final class InvoiceRegistry implements InvoiceRegistryInterface
                         new VatIdNumber($invoiceResult['seller_vat_number'])
                     )
                 );
-                $invoices[$invoiceResult['seller_vat_number']]->setAdditionalText($invoiceResult['additional_info']);
+                $invoices[$invoiceResult['invoice_number']]->setAdditionalText($invoiceResult['additional_info']);
             }
 
-            $invoices[$invoiceResult['seller_vat_number']]->addItem(new Invoice\Item(
+            $invoices[$invoiceResult['invoice_number']]->addItem(new Invoice\Item(
                 $invoiceResult['name'],
                 $invoiceResult['quantity'],
                 $invoiceResult['net_price'],

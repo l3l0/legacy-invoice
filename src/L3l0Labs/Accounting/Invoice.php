@@ -42,59 +42,28 @@ class Invoice
         $this->buyer = $buyer;
     }
 
-    public function addItem(Item $item)
+    public function setAdditionalText($text)
     {
-        $this->items[] = $item;
+        $this->additionalText = $text;
     }
 
-    public function getNumber()
+    public function fillOutView(Invoice\View $view)
     {
-        return $this->number;
+        $view->number = $this->number;
+        $view->buyerName = $this->buyer->getName();
+        $view->buyerAddress = $this->buyer->getAddress();
+        $view->buyerVatNumber = $this->buyer->getVatNumber();
+        $view->sellDate = $this->sellDate;
+        $view->sellerName = $this->seller->getName();
+        $view->sellerAddress = $this->seller->getAddress();
+        $view->sellerVatNumber = $this->seller->getVatNumber();
+        $view->period = $this->period;
+        $view->totalPrice = $this->getTotalPrice();
+        $view->items = $this->items;
+        $view->additionalText = $this->additionalText;
     }
 
-    /**
-     * @return Seller
-     */
-    public function getSeller()
-    {
-        return $this->seller;
-    }
-
-    /**
-     * @return Buyer
-     */
-    public function getBuyer()
-    {
-        return $this->buyer;
-    }
-
-    /**
-     * @return Period
-     */
-    public function getPeriod()
-    {
-        return $this->period;
-    }
-
-    /**
-     * @return DateTimeInterface
-     */
-    public function getSellDate()
-    {
-        return $this->sellDate;
-    }
-
-    public function setAdditionalText($additionalText)
-    {
-        $this->additionalText = $additionalText;
-    }
-
-    public function getAdditionalText()
-    {
-        return $this->additionalText;
-    }
-
-    public function getTotalPrice()
+    private function getTotalPrice()
     {
         $totalPrice = 0;
         foreach ($this->items as $item) {
@@ -102,13 +71,5 @@ class Invoice
         }
 
         return $totalPrice;
-    }
-
-    /**
-     * @return Item[]
-     */
-    public function getItems()
-    {
-        return $this->items;
     }
 }

@@ -5,8 +5,9 @@ namespace L3l0Labs\Adapters\MysqlAccountingAdapter;
 use L3l0Labs\Accounting\Invoice;
 use L3l0Labs\Accounting\Invoice\VatIdNumber;
 use L3l0Labs\Accounting\InvoiceRegistry as InvoiceRegistryInterface;
+use L3l0Labs\Accounting\InvoiceViewRegistry;
 
-final class InvoiceRegistry implements InvoiceRegistryInterface
+final class InvoiceRegistry implements InvoiceRegistryInterface, InvoiceViewRegistry
 {
     /**
      * @var \PDO
@@ -20,36 +21,36 @@ final class InvoiceRegistry implements InvoiceRegistryInterface
 
     /**
      * @param $toVatNumber
-     * @return Invoice[]
+     * @return Invoice\View[]
      */
     public function incoming(VatIdNumber $toVatNumber)
     {
         $invoicesResultStmt = $this
             ->pdoHandler
-            ->prepare('SELECT invoice.*, item.* FROM invoices invoice LEFT JOIN invoice_items item ON invoice.id = item.invoice_id WHERE invoice.buyer_vat_number = :vat')
+            ->prepare('SELECT invoice.*, item.*, invoice.total_price as invoice_total_price FROM invoices invoice LEFT JOIN invoice_items item ON invoice.id = item.invoice_id WHERE invoice.buyer_vat_number = :vat')
         ;
         $invoicesResultStmt->bindValue('vat', (string) $toVatNumber);
         $invoicesResultStmt->execute();
         $invoicesResults = $invoicesResultStmt->fetchAll();
 
-        return $this->hydrateToInvoices($invoicesResults);
+        return $this->hydrateToInvoiceViews($invoicesResults);
     }
 
     /**
      * @param $fromVatNumber
-     * @return Invoice[]
+     * @return Invoice\View[]
      */
     public function outgoing(VatIdNumber $fromVatNumber)
     {
         $invoicesResultStmt = $this
             ->pdoHandler
-            ->prepare('SELECT invoice.*, item.* FROM invoices invoice LEFT JOIN invoice_items item ON invoice.id = item.invoice_id WHERE invoice.seller_vat_number = :vat')
+            ->prepare('SELECT invoice.*, item.*, invoice.total_price as invoice_total_price FROM invoices invoice LEFT JOIN invoice_items item ON invoice.id = item.invoice_id WHERE invoice.seller_vat_number = :vat')
         ;
         $invoicesResultStmt->bindValue('vat', (string) $fromVatNumber);
         $invoicesResultStmt->execute();
         $invoicesResults = $invoicesResultStmt->fetchAll();
 
-        return $this->hydrateToInvoices($invoicesResults);
+        return $this->hydrateToInvoiceViews($invoicesResults);
     }
 
     /**
@@ -81,20 +82,23 @@ final class InvoiceRegistry implements InvoiceRegistryInterface
 
     private function insert(Invoice $invoice)
     {
+        $invoiceView = new Invoice\View();
+        $invoice->fillOutView($invoiceView);
+
         $stmt = $this->pdoHandler->prepare('INSERT INTO invoices (invoice_number, date_of_invoice, sell_date, maturity_date, seller_name, seller_address, seller_vat_number, buyer_name, buyer_address, buyer_vat_number, additional_info, total_price) VALUES (:invoice_number, :date_of_invoice, :sell_date, :maturity_date, :seller_name, :seller_address, :seller_vat_number, :buyer_name, :buyer_address, :buyer_vat_number, :additional_info, :total_price)');
         $success = $stmt->execute([
-            'invoice_number' => $invoice->getNumber(),
-            'date_of_invoice' => $invoice->getPeriod()->getFrom()->format('Y-m-d'),
-            'sell_date' => $invoice->getSellDate()->format('Y-m-d'),
-            'maturity_date' => $invoice->getPeriod()->getTo()->format('Y-m-d'),
-            'seller_name' => $invoice->getSeller()->getName(),
-            'seller_address' => $invoice->getSeller()->getAddress(),
-            'seller_vat_number' => (string) $invoice->getSeller()->getVatNumber(),
-            'buyer_name' => $invoice->getBuyer()->getName(),
-            'buyer_address' => $invoice->getBuyer()->getAddress(),
-            'buyer_vat_number' => (string) $invoice->getBuyer()->getVatNumber(),
-            'additional_info' => $invoice->getAdditionalText(),
-            'total_price' => $invoice->getTotalPrice()
+            'invoice_number' => $invoiceView->number,
+            'date_of_invoice' => $invoiceView->period->getFrom()->format('Y-m-d'),
+            'sell_date' => $invoiceView->sellDate->format('Y-m-d'),
+            'maturity_date' => $invoiceView->period->getTo()->format('Y-m-d'),
+            'seller_name' => $invoiceView->sellerName,
+            'seller_address' => $invoiceView->sellerAddress,
+            'seller_vat_number' => (string) $invoiceView->sellerVatNumber,
+            'buyer_name' => $invoiceView->buyerName,
+            'buyer_address' => $invoiceView->buyerAddress,
+            'buyer_vat_number' => (string) $invoiceView->buyerVatNumber,
+            'additional_info' => $invoiceView->additionalText,
+            'total_price' => $invoiceView->totalPrice
         ]);
         if (!$success) {
             throw new \RuntimeException(
@@ -107,7 +111,7 @@ final class InvoiceRegistry implements InvoiceRegistryInterface
         }
 
         $invoiceId = $this->lastInvoiceId();
-        foreach ($invoice->getItems() as $item) {
+        foreach ($invoiceView->items as $item) {
             $stmt = $this->pdoHandler->prepare(
                 "INSERT INTO invoice_items (invoice_id, name, quantity, unit, net_price, vat, total_price) VALUES (:invoice_id, :name, :quantity, :unit, :net_price, :vat, :total_price)"
             );
@@ -155,43 +159,41 @@ final class InvoiceRegistry implements InvoiceRegistryInterface
 
     /**
      * @param $invoicesResults
-     * @return Invoice[]
+     * @return Invoice\View[]
      */
-    private function hydrateToInvoices($invoicesResults)
+    private function hydrateToInvoiceViews($invoicesResults)
     {
-        $invoices = [];
+        $invoiceViews = [];
         foreach ($invoicesResults as $invoiceResult) {
-            if (!isset($invoices[$invoiceResult['invoice_number']])) {
-                $invoices[$invoiceResult['invoice_number']] = new Invoice(
-                    $invoiceResult['invoice_number'],
-                    new Invoice\Seller(
-                        $invoiceResult['seller_name'],
-                        $invoiceResult['seller_address'],
-                        new VatIdNumber($invoiceResult['seller_vat_number'])
-                    ),
-                    new Invoice\Period(
-                        new \DateTimeImmutable($invoiceResult['date_of_invoice']),
-                        new \DateTimeImmutable($invoiceResult['maturity_date'])
-                    ),
-                    new \DateTimeImmutable($invoiceResult['sell_date']),
-                    new Invoice\Buyer(
-                        $invoiceResult['seller_name'],
-                        $invoiceResult['seller_address'],
-                        new VatIdNumber($invoiceResult['seller_vat_number'])
-                    )
+            if (!isset($invoiceViews[$invoiceResult['invoice_number']])) {
+                $invoiceView = new Invoice\View;
+                $invoiceView->number = $invoiceResult['invoice_number'];
+                $invoiceView->sellerName = $invoiceResult['seller_name'];
+                $invoiceView->sellerAddress = $invoiceResult['seller_address'];
+                $invoiceView->sellerVatNumber = new VatIdNumber($invoiceResult['seller_vat_number']);
+                $invoiceView->period = new Invoice\Period(
+                    new \DateTimeImmutable($invoiceResult['date_of_invoice']),
+                    new \DateTimeImmutable($invoiceResult['maturity_date'])
                 );
-                $invoices[$invoiceResult['invoice_number']]->setAdditionalText($invoiceResult['additional_info']);
+                $invoiceView->sellDate = new \DateTimeImmutable($invoiceResult['sell_date']);
+                $invoiceView->buyerName = $invoiceResult['buyer_name'];
+                $invoiceView->buyerAddress = $invoiceResult['seller_address'];
+                $invoiceView->buyerVatNumber = new VatIdNumber($invoiceResult['buyer_vat_number']);
+                $invoiceView->additionalText = $invoiceResult['additional_info'];
+                $invoiceView->totalPrice = $invoiceResult['invoice_total_price'];
+
+                $invoiceViews[$invoiceResult['invoice_number']] = $invoiceView;
             }
 
-            $invoices[$invoiceResult['invoice_number']]->addItem(new Invoice\Item(
+            $invoiceViews[$invoiceResult['invoice_number']]->items[] = new Invoice\Item(
                 $invoiceResult['name'],
                 $invoiceResult['quantity'],
                 $invoiceResult['net_price'],
                 $invoiceResult['vat'],
                 $invoiceResult['unit']
-            ));
+            );
         }
 
-        return $invoices;
+        return $invoiceViews;
     }
 }

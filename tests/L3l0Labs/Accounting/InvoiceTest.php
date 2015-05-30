@@ -40,10 +40,12 @@ class InvoiceTest extends \PhpUnit_Framework_TestCase
         );
         $invoice->addItem($item);
 
-        $this->assertEquals('2015/01/01', $invoice->getNumber());
-        $this->assertEquals('Cocoders Sp. z o.o', $invoice->getSeller()->getName());
-        $this->assertEquals('ul. Jęczmienna 19, 87-200 Toruń', $invoice->getSeller()->getAddress());
-        $this->assertEquals('Leszek Prabucki "l3l0 labs"', $invoice->getBuyer()->getName());
-        $this->assertEquals('ul. Królewskie Wzgórze 21/9, 80-283 Gdańsk', $invoice->getBuyer()->getAddress());
+        $invoiceView = new Invoice\View();
+        $invoice->fillOutView($invoiceView);
+        $this->assertEquals('2015/01/01', $invoiceView->number);
+        $this->assertEquals('Cocoders Sp. z o.o', $invoiceView->sellerName);
+        $this->assertEquals('ul. Jęczmienna 19, 87-200 Toruń', $invoiceView->sellerAddress);
+        $this->assertEquals('Leszek Prabucki "l3l0 labs"', $invoiceView->buyerName);
+        $this->assertEquals('ul. Królewskie Wzgórze 21/9, 80-283 Gdańsk', $invoiceView->buyerAddress);
     }
 }

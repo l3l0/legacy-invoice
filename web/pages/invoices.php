@@ -42,11 +42,11 @@ $invoices = $invoiceRegistry->outgoing(new VatIdNumber($_SESSION['loggedInUser']
                 <tbody>
                     <?php foreach ($invoices as $invoice): ?>
                         <tr>
-                            <td><?php echo $invoice->getNumber() ?></a></td>
-                            <td><?php echo $invoice->getSellDate()->format('Y-m-d') ?></td>
-                            <td><?php echo $invoice->getPeriod()->getFrom()->format('Y-m-d') ?></td>
-                            <td><?php echo $invoice->getBuyer()->getName() ?></td>
-                            <td><?php echo $invoice->getTotalPrice() ?> PLN</td>
+                            <td><?php echo $invoice->number ?></a></td>
+                            <td><?php echo $invoice->sellDate->format('Y-m-d') ?></td>
+                            <td><?php echo $invoice->period->getFrom()->format('Y-m-d') ?></td>
+                            <td><?php echo $invoice->buyerName ?></td>
+                            <td><?php echo $invoice->totalPrice ?> PLN</td>
                         </tr>
                     <?php endforeach ?>
                 </tbody>

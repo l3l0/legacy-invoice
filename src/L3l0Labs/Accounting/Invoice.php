@@ -47,6 +47,11 @@ class Invoice
         $this->additionalText = $text;
     }
 
+    public function addItem(Invoice\Item $item)
+    {
+        $this->items[] = $item;
+    }
+
     public function fillOutView(Invoice\View $view)
     {
         $view->number = $this->number;

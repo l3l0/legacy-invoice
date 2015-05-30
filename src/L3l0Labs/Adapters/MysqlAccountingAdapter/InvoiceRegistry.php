@@ -104,7 +104,7 @@ final class InvoiceRegistry implements InvoiceRegistryInterface, InvoiceViewRegi
             throw new \RuntimeException(
                 sprintf(
                     'Cannot insert invoice %s (mysql adapter) errno: %s',
-                    $invoice->getNumber(),
+                    $invoiceView->number,
                     $this->pdoHandler->errorCode()
                 )
             );
@@ -128,7 +128,7 @@ final class InvoiceRegistry implements InvoiceRegistryInterface, InvoiceViewRegi
                 throw new \RuntimeException(
                     sprintf(
                         'Cannot insert invoice item to invoice %s into (mysql adapter). errno %s invoice id %s',
-                        $invoice->getNumber(),
+                        $invoiceView->number,
                         $invoiceId
                     )
                 );
@@ -142,12 +142,15 @@ final class InvoiceRegistry implements InvoiceRegistryInterface, InvoiceViewRegi
      */
     private function shouldBeUpdated(Invoice $invoice)
     {
+        $invoiceView = new Invoice\View();
+        $invoice->fillOutView($invoiceView);
+
         $invoiceIsForUpdateStmt = $this
             ->pdoHandler
             ->prepare('SELECT id FROM invoices WHERE invoice_number = :invoiceNumber AND seller_vat_number = :sellerVatNumber')
         ;
-        $invoiceIsForUpdateStmt->bindValue('invoiceNumber', (string) $invoice->getNumber());
-        $invoiceIsForUpdateStmt->bindValue('sellerVarNumber', (string) $invoice->getSeller()->getVatNumber());
+        $invoiceIsForUpdateStmt->bindValue('invoiceNumber', (string) $invoiceView->number);
+        $invoiceIsForUpdateStmt->bindValue('sellerVarNumber', (string) $invoiceView->sellerVatNumber);
 
         return (boolean) $invoiceIsForUpdateStmt->fetchColumn();
     }

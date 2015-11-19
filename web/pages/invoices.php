@@ -1,8 +1,10 @@
 <?php
-    $stmt = $connection->prepare('SELECT id, invoice_number, buyer_name, sell_date, date_of_invoice, total_price FROM invoices WHERE user_id = :user_id');
-    $stmt->execute(['user_id' => $_SESSION['loggedInUser']['id']]);
 
-    $invoices = $stmt->fetchAll();
+use L3l0Labs\Accounting\Invoice\VatIdNumber;
+
+global $invoiceRegistry;
+
+$invoices = $invoiceRegistry->outgoing(new VatIdNumber($_SESSION['loggedInUser']['vat']));
 ?>
 
 <div class="row">
@@ -40,11 +42,11 @@
                 <tbody>
                     <?php foreach ($invoices as $invoice): ?>
                         <tr>
-                            <td><a href="/index.php?page=invoice-edit&invoice_id=<?php echo $invoice['id'] ?>"><?php echo $invoice['invoice_number'] ?></a></td>
-                            <td><?php echo date('Y-m-d', strtotime($invoice['sell_date'])) ?></td>
-                            <td><?php echo date('Y-m-d', strtotime($invoice['date_of_invoice'])) ?></td>
-                            <td><?php echo $invoice['buyer_name'] ?></td>
-                            <td><?php echo $invoice['total_price'] ?> PLN</td>
+                            <td><?php echo $invoice->number ?></a></td>
+                            <td><?php echo $invoice->sellDate->format('Y-m-d') ?></td>
+                            <td><?php echo $invoice->period->getFrom()->format('Y-m-d') ?></td>
+                            <td><?php echo $invoice->buyerName ?></td>
+                            <td><?php echo $invoice->totalPrice ?> PLN</td>
                         </tr>
                     <?php endforeach ?>
                 </tbody>

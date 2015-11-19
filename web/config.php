@@ -1,5 +1,10 @@
 <?php
 
+require_once '../vendor/autoload.php';
+
+error_reporting(E_ALL);
+ini_set('display_error', 1);
+
 $config = [
     'db_host' => 'db',
     'db_user' => 'root',
@@ -46,4 +51,7 @@ try {
 } catch (\PDOException $exception) {
     die ('Cannot connect to database');
 }
+
+$invoiceRegistry = new \L3l0Labs\Adapters\MysqlAccountingAdapter\InvoiceRegistry($connection);
+$issueInvoice = new \L3l0Labs\Accounting\UseCase\IssueInvoice($invoiceRegistry);
 

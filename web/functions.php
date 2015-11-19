@@ -1,5 +1,7 @@
 <?php
 
+use L3l0Labs\Accounting\Invoice;
+
 $loginErrors = [];
 $registerErrors = [];
 $invoiceFormErrors = [];
@@ -14,7 +16,7 @@ function login() {
         $loginErrors['password'] = "Password field was empty.";
     } elseif (!empty($_POST['email']) && !empty($_POST['password'])) {
 
-        $stmt = $connection->prepare('SELECT id, email, password_hash FROM users WHERE email = :email');
+        $stmt = $connection->prepare('SELECT id, email, password_hash, vat FROM users WHERE email = :email');
         $stmt->execute(['email' => $_POST['email']]);
         $users = $stmt->fetchAll();
 
@@ -39,7 +41,9 @@ function register()
         $registerErrors['email'] = "Email field was empty.";
     } elseif (empty($_POST['password'])) {
         $registerErrors['password'] = "Password field was empty.";
-    } elseif (!empty($_POST['email']) && !empty($_POST['password'])) {
+    } elseif (empty($_POST['vat'])) {
+        $registerErrors['vat'] = "Vat field was empty.";
+    } elseif (!empty($_POST['email']) && !empty($_POST['password']) && !empty($_POST['vat'])) {
         $stmt = $connection->prepare('SELECT id, email FROM users WHERE email = :email');
         $stmt->execute(['email' => $_POST['email']]);
         $users = $stmt->fetchAll();
@@ -48,8 +52,12 @@ function register()
             $registerErrors['email'] = "User with given email exists already.";
             return;
         }
-        $stmt = $connection->prepare('INSERT INTO users (email, password_hash) VALUES (:email, :password)');
-        $stmt->execute(['email' => $_POST['email'], 'password' => password_hash($_POST['password'], PASSWORD_BCRYPT)]);
+        $stmt = $connection->prepare('INSERT INTO users (email, password_hash, vat) VALUES (:email, :password, :vat)');
+        $stmt->execute([
+            'email' => $_POST['email'],
+            'password' => password_hash($_POST['password'], PASSWORD_BCRYPT),
+            'vat' => (string) (new Invoice\VatIdNumber($_POST['vat']))
+        ]);
         header('Location: /login.php?successRegister=1');
         exit;
     }
@@ -111,39 +119,24 @@ function totalPrice($items)
 
 function createInvoice()
 {
-    global $connection, $invoiceFormErrors;
+    global $issueInvoice, $invoiceFormErrors;
 
     validateInvoice();
 
     if (!$invoiceFormErrors) {
-        $stmt = $connection->prepare('INSERT INTO invoices (invoice_number, date_of_invoice, sell_date, maturity_date, seller_name, seller_address, seller_vat_number, buyer_name, buyer_address, buyer_vat_number, user_id, additional_info, total_price) VALUES (:invoice_number, :date_of_invoice, :sell_date, :maturity_date, :seller_name, :seller_address, :seller_vat_number, :buyer_name, :buyer_address, :buyer_vat_number, :user_id, :additional_info, :total_price)');
-        $stmt->execute([
-            'invoice_number' => $_POST['invoice_number'],
-            'date_of_invoice' => date($_POST['date_of_invoice']),
-            'sell_date' => date($_POST['date_of_invoice']),
-            'maturity_date' => date($_POST['date_of_invoice']),
-            'seller_name' => $_POST['seller_name'],
-            'seller_address' => $_POST['seller_address'],
-            'seller_vat_number' => $_POST['seller_vat_number'],
-            'buyer_name' => $_POST['buyer_name'],
-            'buyer_address' => $_POST['buyer_address'],
-            'buyer_vat_number' => $_POST['buyer_vat_number'],
-            'user_id' => $_SESSION['loggedInUser']['id'],
-            'additional_info' => $_POST['additional_info'],
-            'total_price' => totalPrice($_POST['invoice_item'])
-        ]);
-
-        foreach ($_POST['invoice_item'] as $key => $item) {
-            $stmt = $connection->prepare("INSERT INTO invoice_items (invoice_id, name, quantity, unit, net_price, vat, total_price) VALUES (currval('invoices_id_seq'), :name, :quantity, :unit, :net_price, :vat, :total_price)");
-            $stmt->execute([
-                'name' => $item['name'],
-                'quantity' => $item['quantity'],
-                'unit' => $item['unit'],
-                'net_price' => $item['net_price'],
-                'vat' => $item['vat'],
-                'total_price' => $item['net_price'] + ($item['net_price'] * ($item['vat']/100)),
-            ]);
-        }
+        $issueInvoice->execute(new \L3l0Labs\Accounting\UseCase\IssueInvoice\Command(
+            $_POST['invoice_number'],
+            $_POST['seller_name'],
+            $_POST['seller_address'],
+            $_POST['seller_vat_number'],
+            $_POST['date_of_invoice'],
+            $_POST['maturity_date'],
+            $_POST['sell_date'],
+            $_POST['buyer_name'],
+            $_POST['buyer_address'],
+            $_POST['buyer_vat_number'],
+            $_POST['invoice_item']
+        ));
 
         header('Location: /index.php?page=invoices&successMessage="Invoice created"');
         exit;

@@ -1,13 +1,17 @@
 <?php
 
+declare (strict_types = 1);
+
 namespace L3l0Labs\Accounting\Invoice;
+
+use DateTimeInterface;
 
 final class Period
 {
     private $from;
     private $to;
 
-    public function __construct(\DateTimeInterface $from, \DateTimeInterface $to)
+    public function __construct(DateTimeInterface $from, DateTimeInterface $to)
     {
         if ($from > $to) {
             throw new \InvalidArgumentException(
@@ -22,17 +26,17 @@ final class Period
     }
 
     /**
-     * @return \DateTimeInterface
+     * @return DateTimeInterface
      */
-    public function getFrom()
+    public function getFrom() : DateTimeInterface
     {
         return $this->from;
     }
 
     /**
-     * @return \DateTimeInterface
+     * @return DateTimeInterface
      */
-    public function getTo()
+    public function getTo() : DateTimeInterface
     {
         return $this->to;
     }

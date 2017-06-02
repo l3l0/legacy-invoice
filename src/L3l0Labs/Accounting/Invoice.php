@@ -1,5 +1,7 @@
 <?php
 
+declare (strict_types = 1);
+
 namespace L3l0Labs\Accounting;
 
 use DateTimeInterface;
@@ -10,28 +12,44 @@ use L3l0Labs\Accounting\Invoice\Seller;
 
 class Invoice
 {
+    /**
+     * @var string
+     */
     private $number;
+
     /**
      * @var Seller
      */
     private $seller;
+
     /**
      * @var Period
      */
     private $period;
+
     /**
      * @var DateTimeInterface
      */
     private $sellDate;
+
     /**
      * @var Buyer
      */
     private $buyer;
+
+    /**
+     * @var string
+     */
     private $additionalText;
     private $items = [];
 
+    /**
+     * @var \DateTime
+     */
+    private $createdAt;
+
     public function __construct(
-        $number, Seller $seller, Period $period,
+        string $number, Seller $seller, Period $period,
         DateTimeInterface $sellDate, Buyer $buyer
     )
     {
@@ -40,41 +58,16 @@ class Invoice
         $this->period = $period;
         $this->sellDate = $sellDate;
         $this->buyer = $buyer;
+        $this->createdAt = new \DateTime();
     }
 
-    public function setAdditionalText($text)
+    public function setAdditionalText(string $text) : void
     {
         $this->additionalText = $text;
     }
 
-    public function addItem(Invoice\Item $item)
+    public function addItem(Invoice\Item $item) : void
     {
         $this->items[] = $item;
-    }
-
-    public function fillOutView(Invoice\View $view)
-    {
-        $view->number = $this->number;
-        $view->buyerName = $this->buyer->getName();
-        $view->buyerAddress = $this->buyer->getAddress();
-        $view->buyerVatNumber = $this->buyer->getVatNumber();
-        $view->sellDate = $this->sellDate;
-        $view->sellerName = $this->seller->getName();
-        $view->sellerAddress = $this->seller->getAddress();
-        $view->sellerVatNumber = $this->seller->getVatNumber();
-        $view->period = $this->period;
-        $view->totalPrice = $this->getTotalPrice();
-        $view->items = $this->items;
-        $view->additionalText = $this->additionalText;
-    }
-
-    private function getTotalPrice()
-    {
-        $totalPrice = 0;
-        foreach ($this->items as $item) {
-            $totalPrice += $item->getGrossPrice();
-        }
-
-        return $totalPrice;
     }
 }

@@ -1,0 +1,20 @@
+# Put parameters here that don't need to change on each machine where the app is deployed
+# https://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
+parameters:
+    locale: 'en'
+
+services:
+    l3l0labs.accounting.repository.invoice:
+        class: L3l0Labs\Adapters\Doctrine\Accounting\Invoice\InvoiceRegistry
+        arguments:
+            - '@doctrine.orm.default_entity_manager'
+
+    l3l0labs.accounting.view.invoice:
+        class: L3l0Labs\Adapters\Doctrine\Accounting\Invoice\InvoiceViewRegistry
+        arguments:
+            - '@database_connection'
+
+    l3l0labs.accounting.use_case.issue_invoice:
+        class: L3l0Labs\Accounting\UseCase\IssueInvoice
+        arguments:
+            - '@l3l0labs.accounting.repository.invoice'

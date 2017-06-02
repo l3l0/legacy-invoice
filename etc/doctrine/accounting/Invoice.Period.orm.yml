@@ -1,0 +1,7 @@
+L3l0Labs\Accounting\Invoice\Period:
+    type: embeddable
+    fields:
+        from:
+            type: datetime
+        to:
+            type: datetime

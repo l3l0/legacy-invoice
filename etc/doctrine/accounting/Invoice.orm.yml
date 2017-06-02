@@ -1,0 +1,33 @@
+L3l0Labs\Accounting\Invoice:
+    type: entity
+    table: invoices
+    id:
+        number:
+            type: string
+            length: 255
+            generator: { strategy: NONE }
+    fields:
+        sellDate:
+            type: datetime
+            column: sell_date
+            nullable: false
+        additionalText:
+            type: text
+            column: additional_text
+            nullable: true
+        createdAt:
+            type: datetime
+            column: created_at
+            nullable: false
+        items:
+            type: items
+    embedded:
+        seller:
+            class: L3l0Labs\Accounting\Invoice\Seller
+            columnPrefix: seller_
+        buyer:
+            class: L3l0Labs\Accounting\Invoice\Buyer
+            columnPrefix: buyer_
+        period:
+            class: L3l0Labs\Accounting\Invoice\Period
+            columnPrefix: period_

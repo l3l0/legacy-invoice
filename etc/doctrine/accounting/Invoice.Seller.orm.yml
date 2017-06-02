@@ -1,0 +1,12 @@
+L3l0Labs\Accounting\Invoice\Seller:
+    type: embeddable
+    fields:
+        name:
+            type: string
+            length: 255
+        address:
+            type: string
+            length: 255
+    embedded:
+        vatNumber:
+            class: L3l0Labs\Accounting\Invoice\VatIdNumber

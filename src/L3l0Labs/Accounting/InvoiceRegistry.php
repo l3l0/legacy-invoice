@@ -1,8 +1,8 @@
 <?php
 
-namespace L3l0Labs\Accounting;
+declare (strict_types = 1);
 
-use L3l0Labs\Accounting\Invoice\VatIdNumber;
+namespace L3l0Labs\Accounting;
 
 interface InvoiceRegistry
 {
@@ -12,7 +12,7 @@ interface InvoiceRegistry
      * That method should not adds same invoice twice
      *
      * @param Invoice $invoice
-     * @return null
+     * @return void
      */
-    public function add(Invoice $invoice);
+    public function add(Invoice $invoice) : void;
 }

@@ -1,5 +1,7 @@
 <?php
 
+declare (strict_types = 1);
+
 namespace L3l0Labs\Accounting\UseCase\IssueInvoice;
 
 final class Command
@@ -18,19 +20,18 @@ final class Command
     public $items;
 
     public function __construct(
-        $invoiceNumber,
-        $sellerName,
-        $sellerAddress,
-        $sellerVatNumber,
-        $dateOfInvoice,
-        $maturityDate,
-        $sellDate,
-        $buyerName,
-        $buyerAddress,
-        $buyerVatNumber,
+        string $invoiceNumber,
+        string $sellerName,
+        string $sellerAddress,
+        string $sellerVatNumber,
+        string $dateOfInvoice,
+        string $maturityDate,
+        string $sellDate,
+        string $buyerName,
+        string $buyerAddress,
+        string $buyerVatNumber,
         $items = []
-    )
-    {
+    ) {
 
         $this->invoiceNumber = $invoiceNumber;
         $this->sellerName = $sellerName;

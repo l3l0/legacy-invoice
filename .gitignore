@@ -1,2 +1,7 @@
-bin/
 vendor/
+###> symfony/framework-bundle ###
+.env
+/var/
+/vendor/
+/web/bundles/
+###< symfony/framework-bundle ###

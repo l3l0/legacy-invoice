@@ -1,0 +1,28 @@
+{% extends 'base.html.twig' %}
+
+{% block content %}
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover tablesorter">
+            <thead>
+            <tr>
+                <th>Invoice number <i class="fa fa-sort"></i></th>
+                <th>Sell Date <i class="fa fa-sort"></i></th>
+                <th>Creation Date<i class="fa fa-sort"></i></th>
+                <th>Buyer <i class="fa fa-sort"></i></th>
+                <th>Total price <i class="fa fa-sort"></i></th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for invoice in invoices %}
+            <tr>
+                <td>{{ invoice.name }}</td>
+                <td>{{ inovice.sellDate | date('Y-m-d') }}</td>
+                <td>{{ invoice.period.from | date('Y-m-d') }}</td>
+                <td>{{ invoice.buyerName }}</td>
+                <td>{{ invoice.totalPrice }}</td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock content %}

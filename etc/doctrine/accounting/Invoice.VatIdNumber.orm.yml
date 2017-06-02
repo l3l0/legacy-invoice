@@ -1,0 +1,6 @@
+L3l0Labs\Accounting\Invoice\VatIdNumber:
+    type: embeddable
+    fields:
+        number:
+            type: string
+            length: 255

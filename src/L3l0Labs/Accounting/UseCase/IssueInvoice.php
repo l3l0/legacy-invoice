@@ -1,5 +1,7 @@
 <?php
 
+declare (strict_types = 1);
+
 namespace L3l0Labs\Accounting\UseCase;
 
 use L3l0Labs\Accounting\Invoice;
@@ -14,7 +16,7 @@ class IssueInvoice
         $this->invoiceRegistry = $invoiceRegistry;
     }
 
-    public function execute(IssueInvoice\Command $command)
+    public function execute(IssueInvoice\Command $command) : void
     {
         $invoice = new Invoice(
             $command->invoiceNumber,

@@ -1,5 +1,7 @@
 <?php
 
+declare (strict_types = 1);
+
 namespace L3l0Labs\Accounting\Invoice;
 
 final class Item
@@ -10,7 +12,7 @@ final class Item
     private $vatRate;
     private $unit;
 
-    public function __construct($name, $quantity, $netPrice, $vatRate, $unit)
+    public function __construct(string $name, int $quantity, float $netPrice, int $vatRate, string $unit)
     {
         $this->name = $name;
         $this->quantity = $quantity;
@@ -19,34 +21,34 @@ final class Item
         $this->unit = $unit;
     }
 
-    public function getUnit()
+    public function getUnit() : string
     {
         return $this->unit;
     }
 
-    public function getGrossPrice()
+    public function getGrossPrice() : float
     {
         $totalNetPrice = $this->quantity * $this->netPrice;
 
         return $totalNetPrice + ($totalNetPrice * ($this->vatRate/100));
     }
 
-    public function getName()
+    public function getName() : string
     {
         return $this->name;
     }
 
-    public function getQuantity()
+    public function getQuantity() : int
     {
         return $this->quantity;
     }
 
-    public function getVatRate()
+    public function getVatRate() : int
     {
         return $this->vatRate;
     }
 
-    public function getNetPrice()
+    public function getNetPrice() : float
     {
         return $this->netPrice;
     }

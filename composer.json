@@ -1,19 +1,35 @@
 {
-  "name": "invoice",
+  "name": "l3l0/invoice",
   "autoload": {
     "psr-4": {
-      "": "src/"
+      "L3l0Labs\\": "src/L3l0Labs/",
+      "App\\": "src/App/"
     }
   },
   "require": {
-    "php": ">=5.6.0"
+    "php": "^7.1.3",
+    "symfony/flex": "^1.0",
+    "symfony/framework-bundle": "^3.3",
+    "symfony/yaml": "^3.3",
+    "symfony/console": "^3.3",
+    "symfony/twig-bundle": "^3.3",
+    "symfony/asset": "^3.3",
+    "symfony/orm-pack": "^1.0"
   },
   "require-dev": {
-    "behat/behat": "~3.0.14",
-    "phpspec/phpspec": "~2.1.0",
-    "phpunit/phpunit": "4.7.*@dev"
+    "symfony/dotenv": "^3.3",
+    "behat/behat": "~3.3.1",
+    "phpspec/phpspec": "~3.4.0",
+    "phpunit/phpunit": "~6.1.4",
+    "doctrine/doctrine-fixtures-bundle": "^2.3"
   },
   "config": {
     "bin-dir": "bin"
+  },
+  "scripts": {
+    "auto-scripts": {
+      "make cache-warmup": "script",
+      "assets:install --symlink --relative %WEB_DIR%": "symfony-cmd"
+    }
   }
 }

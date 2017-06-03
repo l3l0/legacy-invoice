@@ -7,4 +7,5 @@ return [
     'Doctrine\Bundle\DoctrineBundle\DoctrineBundle' => ['all' => true],
     'Doctrine\Bundle\FixturesBundle\DoctrineFixturesBundle' => ['all' => true],
     'Symfony\Bundle\WebProfilerBundle\WebProfilerBundle' => ['dev' => true, 'test' => true],
+    'Symfony\Bundle\SecurityBundle\SecurityBundle' => ['all' => true],
 ];

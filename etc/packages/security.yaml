@@ -1,0 +1,16 @@
+security:
+    encoders:
+        App\Security\User:
+            algorithm: bcrypt
+    providers:
+        user: { id: l3l0labs.app.security.user_provider }
+    firewalls:
+        dev:
+            pattern: ^/(_(profiler|wdt)|css|images|js)/
+            security: false
+        main:
+            provider: user
+            http_basic: ~
+
+    access_control:
+        - { path: ^/, roles: ROLE_USER }

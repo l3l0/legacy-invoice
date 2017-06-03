@@ -1,0 +1,14 @@
+L3l0Labs\SystemAccess\User:
+    type: entity
+    table: users
+    id:
+        id:
+            type: guid
+            generator: { strategy: NONE }
+    embedded:
+        email:
+            class: L3l0Labs\SystemAccess\Email
+        passwordHash:
+            class: L3l0Labs\SystemAccess\PasswordHash
+        vatIdNumber:
+            class: L3l0Labs\Accounting\Invoice\VatIdNumber

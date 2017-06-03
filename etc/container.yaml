@@ -18,3 +18,14 @@ services:
         class: L3l0Labs\Accounting\UseCase\IssueInvoice
         arguments:
             - '@l3l0labs.accounting.repository.invoice'
+
+    l3l0labs.system_access.repository.user:
+        class: L3l0Labs\Adapters\Doctrine\SystemAccess\Users
+        arguments:
+            - '@doctrine.orm.default_entity_manager'
+
+    l3l0labs.app.security.user_provider:
+        class: App\Security\UserProvider
+        arguments:
+          - '@l3l0labs.system_access.repository.user'
+

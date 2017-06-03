@@ -14,3 +14,9 @@ doctrine:
                 dir: '%kernel.project_dir%/etc/doctrine/accounting'
                 prefix: 'L3l0Labs\Accounting'
                 alias: Accouting
+            SystemAccess:
+                is_bundle: false
+                type: yml
+                dir: '%kernel.project_dir%/etc/doctrine/system-access'
+                prefix: 'L3l0Labs\SystemAccess'
+                alias: SystemAccess

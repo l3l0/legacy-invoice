@@ -4,22 +4,13 @@ declare (strict_types = 1);
 
 namespace Tests\L3l0Labs\Accounting\Integration\UseCase;
 
-use Doctrine\Common\DataFixtures\Purger\ORMPurger;
 use L3l0Labs\Accounting\Invoice\VatIdNumber;
 use L3l0Labs\Accounting\UseCase\IssueInvoice;
 use L3l0Labs\Accounting\View\Invoice;
-use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
+use Tests\L3l0Labs\DoctrineTestCase;
 
-final class IssueInvoiceTest extends KernelTestCase
+final class IssueInvoiceTest extends DoctrineTestCase
 {
-    public function setUp()
-    {
-        parent::setUp();
-        parent::bootKernel();
-
-        (new ORMPurger($this->get('doctrine.orm.default_entity_manager')))->purge();
-    }
-
     public function test_that_issue_invoice_correctly()
     {
         $this
@@ -79,10 +70,5 @@ final class IssueInvoiceTest extends KernelTestCase
         self::assertEquals('Cocoders Sp. z o.o', $invoice->getSellerName());
         self::assertEquals('ul. Jęczmienna 19, 87-200 Toruń', $invoice->getSellerAddress());
         self::assertCount(2, $invoice->getItems());
-    }
-
-    private function get(string $service)
-    {
-        return self::$kernel->getContainer()->get($service);
     }
 }

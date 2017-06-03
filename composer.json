@@ -14,7 +14,8 @@
     "symfony/console": "^3.3",
     "symfony/twig-bundle": "^3.3",
     "symfony/asset": "^3.3",
-    "symfony/orm-pack": "^1.0"
+    "symfony/orm-pack": "^1.0",
+    "symfony/profiler-pack": "^1.0"
   },
   "require-dev": {
     "symfony/dotenv": "^3.3",

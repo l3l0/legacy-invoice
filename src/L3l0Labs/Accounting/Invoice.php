@@ -51,8 +51,7 @@ class Invoice
     public function __construct(
         string $number, Seller $seller, Period $period,
         DateTimeInterface $sellDate, Buyer $buyer
-    )
-    {
+    ) {
         $this->number = $number;
         $this->seller = $seller;
         $this->period = $period;

@@ -1,5 +1,5 @@
 index:
-    path: /
+    path: /invoice/outgoing
     defaults: { _controller: 'App\Controller\InvoiceController::outgoing' }
 
 # Depends on sensio/framework-extra-bundle:^3.0 and doctrine/annotations

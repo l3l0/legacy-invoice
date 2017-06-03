@@ -2,7 +2,7 @@
   <php>
     <server name="KERNEL_DIR" value="src/App" />
     <server name="KERNEL_CLASS" value="\App\Kernel" />
-    <env name="DATABASE_URL" value="mysql://root:invoice@db:3306/invoice?charset=utf8mb4" />
+    <env name="DATABASE_URL" value="mysql://root:invoice@db:3306/invoice_test?charset=utf8mb4" />
   </php>
   <testsuites>
     <testsuite name="unit">

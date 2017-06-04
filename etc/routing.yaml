@@ -2,6 +2,10 @@ index:
     path: /invoice/outgoing
     defaults: { _controller: 'App\Controller\InvoiceController::outgoing' }
 
+login:
+    path: /login
+    defaults: { _controller: 'App\Controller\SecurityController::login' }
+
 # Depends on sensio/framework-extra-bundle:^3.0 and doctrine/annotations
 #controllers:
 #    resource: ../src/Controller/

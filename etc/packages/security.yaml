@@ -9,8 +9,17 @@ security:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
         main:
+            anonymous: ~
             provider: user
-            http_basic: ~
+            form_login:
+                login_path: login
+                check_path: login
+
+            logout:
+                path: logout
+                target: /
+                invalidate_session: true
 
     access_control:
+        - { path: ^/login, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/, roles: ROLE_USER }

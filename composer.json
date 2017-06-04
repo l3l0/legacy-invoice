@@ -22,7 +22,9 @@
     "symfony/orm-pack": "^1.0",
     "symfony/profiler-pack": "^1.0",
     "symfony/security-bundle": "^3.3",
-    "ramsey/uuid": "^3.6"
+    "ramsey/uuid": "^3.6",
+    "symfony/form": "^3.3",
+    "symfony/validator": "^3.3"
   },
   "require-dev": {
     "symfony/dotenv": "^3.3",

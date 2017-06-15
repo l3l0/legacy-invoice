@@ -29,13 +29,11 @@ class RegisterUserSpec extends ObjectBehavior
 
         $users->add(Argument::type(User::class))->shouldBeCalled();
 
-        $command = new Command(
+        $this->execute(new Command(
             'tomasz.strzelecki@wp.pl',
             'password',
             '9562307984'
-        );
-
-        $this->execute($command);
+        ));
     }
 
     function it_disallow_to_register_when_email_exist(Users $users, User $user)

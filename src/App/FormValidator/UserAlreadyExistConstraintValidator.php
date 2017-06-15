@@ -29,7 +29,7 @@ class UserAlreadyExistConstraintValidator extends ConstraintValidator
     public function validate($email, Constraint $constraint)
     {
         try {
-            $this->users->getByEmail(new Email($email));
+            $this->users->get(new Email($email));
 
             $this->context->buildViolation($constraint->message)->addViolation();
         } catch (UserNotFoundException $e) {

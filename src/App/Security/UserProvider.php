@@ -40,7 +40,7 @@ final class UserProvider implements UserProviderInterface
     {
         try {
             $user = new User(
-                $this->users->getByEmail(new Email($username))
+                $this->users->get(new Email($username))
             );
         } catch (\InvalidArgumentException $exception) {
             throw new UsernameNotFoundException(sprintf('Username %s is not valid', $username));

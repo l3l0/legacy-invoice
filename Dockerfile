@@ -1,7 +1,7 @@
 FROM php:7.1-apache
 
 RUN apt-get update \
-    && apt-get install -y git curl bzip2 vim libssl-dev zlib1g-dev libxrender1 libicu-dev g++ libjpeg-dev libjpeg62 libfontconfig-dev mysql-client \
+    && apt-get install -y git mysql-client curl bzip2 vim libssl-dev zlib1g-dev libxrender1 libicu-dev g++ libjpeg-dev libjpeg62 libfontconfig-dev mysql-client \
     && docker-php-ext-install zip mbstring intl pdo_mysql gd
 
 ADD docker/vhost.conf /etc/apache2/sites-enabled/000-default.conf

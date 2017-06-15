@@ -13,6 +13,7 @@ interface Users
      * @throws UserNotFoundException
      * @return User
      */
-    public function getByEmail(Email $email) : User;
+    public function get(Email $email) : User;
+    public function find(Email $email) : bool;
     public function add(User $user) : void;
 }

@@ -27,7 +27,7 @@ final class Users implements UsersInterface
      * @throws UserNotFoundException
      * @return User
      */
-    public function getByEmail(Email $email) : User
+    public function get(Email $email) : User
     {
         $user = $this
             ->objectManager
@@ -40,6 +40,17 @@ final class Users implements UsersInterface
         }
 
         return $user;
+    }
+
+    public function find(Email $email) : bool
+    {
+        $user = $this
+            ->objectManager
+            ->getRepository(User::class)
+            ->findOneBy(['email.email' => (string) $email])
+        ;
+
+        return isset($user) ? true : false;
     }
 
     public function add(User $user) : void

@@ -8,7 +8,6 @@ login:
 
 logout:
     path: /logout
-    defaults: { _controller: 'App\Controller\SecurityController::login' }
 
 register:
     path: /register

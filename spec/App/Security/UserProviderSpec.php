@@ -27,7 +27,7 @@ class UserProviderSpec extends ObjectBehavior
         User $user
     ) {
         $users
-            ->getByEmail(new Email('leszek.prabucki@gmail.com'))
+            ->get(new Email('leszek.prabucki@gmail.com'))
             ->willReturn($user)
         ;
 
@@ -49,7 +49,7 @@ class UserProviderSpec extends ObjectBehavior
     function its_loadUserByUsername_throws_username_not_found_when_user_is_not_found(Users $users)
     {
         $users
-            ->getByEmail(new Email('leszek.prabucki@gmail.com'))
+            ->get(new Email('leszek.prabucki@gmail.com'))
             ->willThrow(
                 new UserNotFoundException()
             )

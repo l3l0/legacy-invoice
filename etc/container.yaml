@@ -29,3 +29,14 @@ services:
         arguments:
           - '@l3l0labs.system_access.repository.user'
 
+    l3l0labs.app.security.use_case.register_user:
+        class: L3l0Labs\SystemAccess\UseCase\RegisterUser
+        arguments:
+          - '@l3l0labs.system_access.repository.user'
+
+    l3l0labs.app.security.use_case.register_user_email_validator:
+        class: App\FormValidator\UserAlreadyExistConstraintValidator
+        arguments:
+          - '@l3l0labs.system_access.repository.user'
+        tags:
+          - { name: validator.constraint_validator }
